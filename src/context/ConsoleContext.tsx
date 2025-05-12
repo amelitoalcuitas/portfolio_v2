@@ -64,6 +64,7 @@ export function ConsoleProvider({ children }: { children: ReactNode }) {
               Type <span className="command-highlight">help</span> to see
               available commands
             </p>
+            <p>Use TAB to autocomplete commands</p>
           </div>
         ),
       },
@@ -210,6 +211,7 @@ export function ConsoleProvider({ children }: { children: ReactNode }) {
               Type <span className="command-highlight">help</span> to see
               available commands
             </p>
+            <p>Use TAB to autocomplete commands</p>
           </div>
         ),
       },
