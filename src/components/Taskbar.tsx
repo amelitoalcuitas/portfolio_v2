@@ -99,7 +99,7 @@ export default function Taskbar() {
           className={`win95-taskbar-item ${
             isMinimized ? "" : "win95-taskbar-item-active"
           }`}
-          onClick={() => setIsMinimized(false)}
+          onClick={() => setIsMinimized(!isMinimized)}
         >
           <span className="win95-taskbar-item-icon">📄</span>
           <span className="win95-taskbar-item-text">Console</span>
