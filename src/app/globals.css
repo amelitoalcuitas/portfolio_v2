@@ -106,11 +106,11 @@ body {
 
 .win95-container {
   display: flex;
-  justify-content: center;
-  align-items: center;
+  position: relative;
   background-color: #008080; /* Classic Windows 95 teal background */
   padding: 20px 20px 0 20px; /* Remove bottom padding to make room for taskbar */
   flex: 1; /* Take up available space */
+  overflow: hidden; /* Ensure content doesn't overflow */
 }
 
 .output {
@@ -175,6 +175,7 @@ h3 {
   overflow-y: scroll; /* Changed from auto to scroll to always show scrollbar */
   padding-bottom: 1rem;
   padding-right: 4px; /* Add padding for the scrollbar */
+  min-height: 0; /* Ensure it doesn't overflow its parent */
 }
 
 /* Scrollbar container */
@@ -305,12 +306,7 @@ h3 {
 
 /* Windows 95 styles */
 .win95-window {
-  position: relative;
-  width: 90%;
-  height: 90%;
-  max-width: 1200px;
-  max-height: 800px;
-  min-height: 600px; /* Ensure minimum height */
+  position: absolute;
   background-color: var(--win95-bg);
   border: 2px solid;
   border-color: var(--win95-border-light) var(--win95-border-darker) var(--win95-border-darker) var(--win95-border-light);
@@ -318,6 +314,98 @@ h3 {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  z-index: 10; /* Ensure it's above other elements */
+  user-select: none; /* Prevent text selection during dragging */
+  box-sizing: border-box;
+  transition: none; /* No animation for snappy response */
+}
+
+/* Maximized window takes up the full screen except for taskbar */
+.win95-window.maximized {
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: calc(100vh - 30px) !important; /* Account for taskbar height */
+  border-width: 0;
+  box-shadow: none;
+}
+
+/* Minimized window only shows the title bar */
+.win95-window.minimized {
+  height: 30px !important;
+  overflow: hidden;
+}
+
+/* Resize handles */
+.win95-resize-handle {
+  position: absolute;
+  z-index: 20;
+}
+
+/* Corner resize handles */
+.win95-resize-handle.top-left,
+.win95-resize-handle.top-right,
+.win95-resize-handle.bottom-left,
+.win95-resize-handle.bottom-right {
+  width: 12px;
+  height: 12px;
+}
+
+.win95-resize-handle.top-left {
+  top: 0;
+  left: 0;
+  cursor: nwse-resize;
+}
+
+.win95-resize-handle.top-right {
+  top: 0;
+  right: 0;
+  cursor: nesw-resize;
+}
+
+.win95-resize-handle.bottom-left {
+  bottom: 0;
+  left: 0;
+  cursor: nesw-resize;
+}
+
+.win95-resize-handle.bottom-right {
+  bottom: 0;
+  right: 0;
+  cursor: nwse-resize;
+}
+
+/* Edge resize handles */
+.win95-resize-handle.top,
+.win95-resize-handle.bottom {
+  height: 4px;
+  left: 12px;
+  right: 12px;
+  cursor: ns-resize;
+}
+
+.win95-resize-handle.left,
+.win95-resize-handle.right {
+  width: 4px;
+  top: 32px; /* Below title bar */
+  bottom: 12px;
+  cursor: ew-resize;
+}
+
+.win95-resize-handle.top {
+  top: 0;
+}
+
+.win95-resize-handle.right {
+  right: 0;
+}
+
+.win95-resize-handle.bottom {
+  bottom: 0;
+}
+
+.win95-resize-handle.left {
+  left: 0;
 }
 
 /* Windows 95 Taskbar styles */
@@ -335,6 +423,7 @@ h3 {
 
 .win95-taskbar-start {
   margin-right: 6px;
+  position: relative;
 }
 
 .win95-start-button {
@@ -350,6 +439,12 @@ h3 {
   cursor: default;
 }
 
+.win95-start-button:active,
+.win95-start-button.active {
+  border-color: var(--win95-border-darker) var(--win95-border-light) var(--win95-border-light) var(--win95-border-darker);
+  box-shadow: inset 1px 1px 0 0 var(--win95-border-dark);
+}
+
 .win95-start-logo {
   margin-right: 4px;
   font-size: 16px;
@@ -357,6 +452,53 @@ h3 {
 
 .win95-start-text {
   font-weight: bold;
+}
+
+.win95-start-menu {
+  position: absolute;
+  bottom: 30px;
+  left: 0;
+  width: 200px;
+  background-color: var(--win95-bg);
+  border: 2px solid;
+  border-color: var(--win95-border-light) var(--win95-border-darker) var(--win95-border-darker) var(--win95-border-light);
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+  padding: 2px;
+}
+
+.win95-menu-item {
+  display: flex;
+  align-items: center;
+  padding: 6px 10px;
+  text-align: left;
+  background-color: var(--win95-bg);
+  border: none;
+  font-family: inherit;
+  font-size: 1rem;
+  cursor: default;
+  color: var(--win95-button-text);
+}
+
+.win95-menu-item:hover,
+.win95-menu-item-active {
+  background-color: var(--win95-title-bg);
+  color: var(--win95-title-text);
+}
+
+.win95-menu-item-icon {
+  display: inline-block;
+  margin-right: 8px;
+  font-size: 16px;
+  min-width: 20px;
+  text-align: center;
+}
+
+.win95-menu-item-text {
+  display: flex;
+  align-items: center;
 }
 
 .win95-taskbar-items {
@@ -436,6 +578,7 @@ h3 {
   font-weight: normal; /* VT323 looks better without bold */
   letter-spacing: 0.05em;
   user-select: none;
+  cursor: grab; /* Indicate it can be dragged */
 }
 
 .win95-title-content {
@@ -508,6 +651,8 @@ h3 {
   border-color: var(--win95-border-darker) var(--win95-border-light) var(--win95-border-light) var(--win95-border-darker);
   margin: 2px;
   overflow: hidden;
+  position: relative;
+  min-height: 0; /* Ensure it doesn't overflow its parent */
 }
 
 /* Fade animation removed */

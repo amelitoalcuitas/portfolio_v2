@@ -1,10 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, KeyboardEvent } from "react";
-
-interface ConsoleInputProps {
-  onCommand: (command: string) => void;
-}
+import { useConsole } from "@/context/ConsoleContext";
 
 // List of available commands for autocomplete
 const AVAILABLE_COMMANDS = [
@@ -21,7 +18,8 @@ const AVAILABLE_COMMANDS = [
   "time",
 ];
 
-export default function ConsoleInput({ onCommand }: ConsoleInputProps) {
+export default function ConsoleInput() {
+  const { handleCommand } = useConsole();
   const [input, setInput] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -55,7 +53,7 @@ export default function ConsoleInput({ onCommand }: ConsoleInputProps) {
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     // Enter key - execute command
     if (e.key === "Enter") {
-      onCommand(input.trim().toLowerCase());
+      handleCommand(input.trim().toLowerCase());
       setInput("");
     }
     // Tab key - autocomplete

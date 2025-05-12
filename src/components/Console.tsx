@@ -1,476 +1,414 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import ConsoleInput from "./ConsoleInput";
 import ConsoleOutput from "./ConsoleOutput";
 import TitleBar from "./TitleBar";
-import { v4 as uuidv4 } from "uuid";
-
-// Define the sections for navigation
-const SECTIONS = [
-  { id: "home", label: "Home" },
-  { id: "about", label: "About" },
-  { id: "education", label: "Education" },
-  { id: "skills", label: "Skills" },
-  { id: "experience", label: "Experience" },
-  { id: "projects", label: "Projects" },
-  { id: "contact", label: "Contact" },
-];
-
-// Helper function to get current time in HH:MM:SS format
-const getCurrentTime = () => {
-  const now = new Date();
-  return now.toLocaleTimeString("en-US", { hour12: false });
-};
+import { useConsole } from "@/context/ConsoleContext";
 
 export default function Console() {
-  const [output, setOutput] = useState<
-    Array<{ id: string; content: React.ReactNode }>
-  >([]);
-  const [activeSection, setActiveSection] = useState("home");
+  const { output, isMinimized, setIsMinimized } = useConsole();
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [size, setSize] = useState({ width: 800, height: 600 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [isResizing, setIsResizing] = useState(false);
+  const [isMaximized, setIsMaximized] = useState(false);
+  const [preMaximizeState, setPreMaximizeState] = useState({
+    position: { x: 0, y: 0 },
+    size: { width: 800, height: 600 },
+  });
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const [resizeStart, setResizeStart] = useState({
+    x: 0,
+    y: 0,
+    width: 0,
+    height: 0,
+  });
+  const consoleRef = useRef<HTMLDivElement>(null);
 
-  // Add welcome message on initial load
-  useEffect(() => {
-    setOutput([
-      {
-        id: uuidv4(),
-        content: (
-          <div className="welcome-message">
-            <p>Welcome to the Portfolio Terminal</p>
-            <p>
-              Type <span className="command-highlight">help</span> to see
-              available commands
-            </p>
-          </div>
-        ),
-      },
-    ]);
-  }, []);
+  // Minimum size constraints
+  const MIN_WIDTH = 400;
+  const MIN_HEIGHT = 300;
 
-  // Handle commands
-  const handleCommand = (command: string) => {
-    // Add the command to the output
-    setOutput((prev) => [
-      ...prev,
-      {
-        id: uuidv4(),
-        content: (
-          <div className="command-entry">
-            <span className="console-prompt">{">"}</span>
-            <span className="command-text">{command}</span>
-          </div>
-        ),
-      },
-    ]);
+  // Handle minimize functionality
+  const handleMinimize = () => {
+    // Toggle minimized state in context
+    setIsMinimized(!isMinimized);
+  };
 
-    // Process the command
-    switch (command) {
-      case "help":
-        showHelp();
-        break;
-      case "clear":
-        clearConsole();
-        break;
-      case "home":
-        showHome();
-        setActiveSection("home");
-        break;
-      case "about":
-        showAbout();
-        setActiveSection("about");
-        break;
-      case "education":
-        showEducation();
-        setActiveSection("education");
-        break;
-      case "skills":
-        showSkills();
-        setActiveSection("skills");
-        break;
-      case "experience":
-        showExperience();
-        setActiveSection("experience");
-        break;
-      case "projects":
-        showProjects();
-        setActiveSection("projects");
-        break;
-      case "contact":
-        showContact();
-        setActiveSection("contact");
-        break;
-      case "ls":
-        listSections();
-        break;
-      case "time":
-        showTime();
-        break;
-      default:
-        showUnknownCommand(command);
+  // Handle maximize functionality
+  const handleMaximize = () => {
+    if (isMaximized) {
+      // Restore from maximized state
+      setIsMaximized(false);
+
+      // Get the restored position and size
+      const restoredPosition = preMaximizeState.position;
+      const restoredSize = preMaximizeState.size;
+
+      // Make sure the restored window is within screen boundaries
+      const windowWidth = window.innerWidth;
+      const windowHeight = window.innerHeight;
+
+      // Adjust position if needed
+      const newX = Math.max(
+        0,
+        Math.min(restoredPosition.x, windowWidth - restoredSize.width)
+      );
+      const newY = Math.max(
+        0,
+        Math.min(restoredPosition.y, windowHeight - restoredSize.height)
+      );
+
+      // If the window size is larger than the screen, adjust it
+      const newWidth = Math.min(restoredSize.width, windowWidth);
+      const newHeight = Math.min(restoredSize.height, windowHeight);
+
+      setPosition({ x: newX, y: newY });
+      setSize({ width: newWidth, height: newHeight });
+    } else {
+      // Save current state before maximizing
+      setPreMaximizeState({
+        position: { x: position.x, y: position.y },
+        size: { width: size.width, height: size.height },
+      });
+
+      // Maximize the window to fill the screen, accounting for taskbar height
+      const TASKBAR_HEIGHT = 30; // Height of the Windows 95 taskbar
+      setIsMaximized(true);
+      setPosition({ x: 0, y: 0 });
+      setSize({
+        width: window.innerWidth,
+        height: window.innerHeight - TASKBAR_HEIGHT,
+      });
     }
   };
 
-  // Command handlers
-  const showHelp = () => {
-    setOutput((prev) => [
-      ...prev,
-      {
-        id: uuidv4(),
-        content: (
-          <div className="help-content">
-            <p>Available commands:</p>
-            <ul className="command-list">
-              <li>
-                <span className="command-highlight">help</span> - Show this help
-                message
-              </li>
-              <li>
-                <span className="command-highlight">clear</span> - Clear the
-                console
-              </li>
-              <li>
-                <span className="command-highlight">ls</span> - List all
-                sections
-              </li>
-              <li>
-                <span className="command-highlight">time</span> - Show current
-                time
-              </li>
-              <li>
-                <span className="command-highlight">home</span> - Display home
-                section
-              </li>
-              <li>
-                <span className="command-highlight">about</span> - Display about
-                section
-              </li>
-              <li>
-                <span className="command-highlight">education</span> - Display
-                education section
-              </li>
-              <li>
-                <span className="command-highlight">skills</span> - Display
-                skills section
-              </li>
-              <li>
-                <span className="command-highlight">experience</span> - Display
-                experience section
-              </li>
-              <li>
-                <span className="command-highlight">projects</span> - Display
-                projects section
-              </li>
-              <li>
-                <span className="command-highlight">contact</span> - Display
-                contact section
-              </li>
-            </ul>
-          </div>
-        ),
-      },
-    ]);
+  // Center the console when it first loads - only once
+  useEffect(() => {
+    // Use a small timeout to ensure the component is fully rendered
+    const timer = setTimeout(() => {
+      if (consoleRef.current) {
+        const windowWidth = window.innerWidth;
+        const windowHeight = window.innerHeight;
+
+        // Calculate center position
+        const centerX = (windowWidth - size.width) / 2;
+        const centerY = (windowHeight - size.height) / 2;
+
+        setPosition({ x: centerX, y: centerY });
+      }
+    }, 100); // Small delay to ensure accurate measurements
+
+    return () => clearTimeout(timer);
+  }, []); // Include size dependencies
+
+  // Resize direction types
+  type ResizeDirection =
+    | "top"
+    | "right"
+    | "bottom"
+    | "left"
+    | "top-left"
+    | "top-right"
+    | "bottom-left"
+    | "bottom-right"
+    | null;
+
+  const [resizeDirection, setResizeDirection] = useState<ResizeDirection>(null);
+
+  // Handle the start of resizing
+  const handleResizeStart =
+    (direction: ResizeDirection) => (e: React.MouseEvent<HTMLDivElement>) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      if (consoleRef.current) {
+        setResizeStart({
+          x: e.clientX,
+          y: e.clientY,
+          width: size.width,
+          height: size.height,
+        });
+        setResizeDirection(direction);
+        setIsResizing(true);
+      }
+    };
+
+  // Function to ensure console stays within screen boundaries
+  const ensureWithinBoundaries = useCallback(() => {
+    if (consoleRef.current) {
+      const windowWidth = window.innerWidth;
+      const windowHeight = window.innerHeight;
+
+      // Calculate new position that's within boundaries
+      let newX = position.x;
+      let newY = position.y;
+
+      // Restrict to screen boundaries
+      newX = Math.max(0, Math.min(newX, windowWidth - size.width));
+      newY = Math.max(0, Math.min(newY, windowHeight - size.height));
+
+      if (newX !== position.x || newY !== position.y) {
+        setPosition({ x: newX, y: newY });
+      }
+    }
+  }, [position, size, consoleRef]);
+
+  // Handle mouse movement during resizing
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (isResizing && resizeDirection) {
+        let newWidth = size.width;
+        let newHeight = size.height;
+        let newX = position.x;
+        let newY = position.y;
+
+        // Handle resizing based on direction
+        if (resizeDirection.includes("right")) {
+          newWidth = resizeStart.width + (e.clientX - resizeStart.x);
+        }
+
+        if (resizeDirection.includes("bottom")) {
+          newHeight = resizeStart.height + (e.clientY - resizeStart.y);
+        }
+
+        if (resizeDirection.includes("left")) {
+          const deltaX = resizeStart.x - e.clientX;
+          newWidth = resizeStart.width + deltaX;
+          if (newWidth >= MIN_WIDTH) {
+            newX = resizeStart.x - deltaX;
+          } else {
+            newWidth = MIN_WIDTH;
+          }
+        }
+
+        if (resizeDirection.includes("top")) {
+          const deltaY = resizeStart.y - e.clientY;
+          newHeight = resizeStart.height + deltaY;
+          if (newHeight >= MIN_HEIGHT) {
+            newY = resizeStart.y - deltaY;
+          } else {
+            newHeight = MIN_HEIGHT;
+          }
+        }
+
+        // Apply minimum size constraints
+        newWidth = Math.max(MIN_WIDTH, newWidth);
+        newHeight = Math.max(MIN_HEIGHT, newHeight);
+
+        // Ensure the window doesn't exceed screen boundaries
+        const windowWidth = window.innerWidth;
+        const windowHeight = window.innerHeight;
+
+        if (newX < 0) {
+          const offset = -newX;
+          newX = 0;
+          newWidth -= offset;
+        }
+
+        if (newY < 0) {
+          const offset = -newY;
+          newY = 0;
+          newHeight -= offset;
+        }
+
+        if (newX + newWidth > windowWidth) {
+          newWidth = windowWidth - newX;
+        }
+
+        if (newY + newHeight > windowHeight) {
+          newHeight = windowHeight - newY;
+        }
+
+        // Update size and position
+        setSize({ width: newWidth, height: newHeight });
+        setPosition({ x: newX, y: newY });
+      }
+    };
+
+    const handleMouseUp = () => {
+      setIsResizing(false);
+      setResizeDirection(null);
+    };
+
+    if (isResizing) {
+      window.addEventListener("mousemove", handleMouseMove);
+      window.addEventListener("mouseup", handleMouseUp);
+
+      // Change cursor during resize based on direction
+      if (resizeDirection) {
+        let cursor = "default";
+        switch (resizeDirection) {
+          case "top":
+          case "bottom":
+            cursor = "ns-resize";
+            break;
+          case "left":
+          case "right":
+            cursor = "ew-resize";
+            break;
+          case "top-left":
+          case "bottom-right":
+            cursor = "nwse-resize";
+            break;
+          case "top-right":
+          case "bottom-left":
+            cursor = "nesw-resize";
+            break;
+        }
+        document.body.style.cursor = cursor;
+      }
+    }
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+
+      // Reset cursor
+      document.body.style.cursor = "default";
+    };
+  }, [
+    isResizing,
+    resizeDirection,
+    resizeStart,
+    position,
+    size,
+    MIN_WIDTH,
+    MIN_HEIGHT,
+  ]);
+
+  // Handle window resize to keep console within boundaries
+  useEffect(() => {
+    const handleResize = () => {
+      ensureWithinBoundaries();
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [ensureWithinBoundaries]);
+
+  // Handle the start of dragging
+  const handleDragStart = (e: React.MouseEvent<HTMLDivElement>) => {
+    // Don't allow dragging when maximized
+    if (isMaximized) return;
+
+    if (consoleRef.current) {
+      const rect = consoleRef.current.getBoundingClientRect();
+      setDragOffset({
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top,
+      });
+      setIsDragging(true);
+    }
   };
 
-  const clearConsole = () => {
-    setOutput([]);
-  };
+  // Handle mouse movement during dragging
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (isDragging && consoleRef.current) {
+        const rect = consoleRef.current.getBoundingClientRect();
 
-  const listSections = () => {
-    setOutput((prev) => [
-      ...prev,
-      {
-        id: uuidv4(),
-        content: (
-          <div className="sections-list">
-            <p>Available sections:</p>
-            <ul className="sections-list-items">
-              {SECTIONS.map((section) => (
-                <li key={section.id}>
-                  {section.id === activeSection ? (
-                    <span className="active-section">
-                      <span className="section-prefix">{">"} </span>
-                      {section.label}
-                    </span>
-                  ) : (
-                    <span>{section.label}</span>
-                  )}
-                </li>
-              ))}
-            </ul>
-          </div>
-        ),
-      },
-    ]);
-  };
+        // Calculate new position
+        let newX = e.clientX - dragOffset.x;
+        let newY = e.clientY - dragOffset.y;
 
-  const showTime = () => {
-    setOutput((prev) => [
-      ...prev,
-      {
-        id: uuidv4(),
-        content: <p>Current time: {getCurrentTime()}</p>,
-      },
-    ]);
-  };
+        // Get window dimensions
+        const windowWidth = window.innerWidth;
+        const windowHeight = window.innerHeight;
 
-  const showHome = () => {
-    setOutput((prev) => [
-      ...prev,
-      {
-        id: uuidv4(),
-        content: (
-          <div className="neofetch-output">
-            <div className="neofetch-header">
-              <pre className="ascii-art">{`
-  ██████╗  ██████╗ ██████╗ ████████╗███████╗ ██████╗ ██╗     ██╗ ██████╗
-  ██╔══██╗██╔═══██╗██╔══██╗╚══██╔══╝██╔════╝██╔═══██╗██║     ██║██╔═══██╗
-  ██████╔╝██║   ██║██████╔╝   ██║   █████╗  ██║   ██║██║     ██║██║   ██║
-  ██╔═══╝ ██║   ██║██╔══██╗   ██║   ██╔══╝  ██║   ██║██║     ██║██║   ██║
-  ██║     ╚██████╔╝██║  ██║   ██║   ██║     ╚██████╔╝███████╗██║╚██████╔╝
-  ╚═╝      ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚═╝      ╚═════╝ ╚══════╝╚═╝ ╚═════╝
-              `}</pre>
-            </div>
-            <div className="neofetch-info">
-              <p>
-                <span className="info-label">Name:</span> Your Name
-              </p>
-              <p>
-                <span className="info-label">Title:</span> Full Stack Developer
-              </p>
-              <p>
-                <span className="info-label">Location:</span> Your Location
-              </p>
-              <p>
-                <span className="info-label">OS:</span> Human 1.0
-              </p>
-              <p>
-                <span className="info-label">Uptime:</span> 30 years
-              </p>
-              <p>
-                <span className="info-label">Languages:</span> JavaScript,
-                TypeScript, Python, HTML, CSS
-              </p>
-              <p>
-                <span className="info-label">Frameworks:</span> React, Next.js,
-                Node.js, Express
-              </p>
-              <p>
-                <span className="info-label">Terminal:</span> Portfolio Console
-                v2.0
-              </p>
-              <p>
-                <span className="info-label">Shell:</span> React.js
-              </p>
-              <p>
-                <span className="info-label">Resolution:</span> 1920x1080
-              </p>
-              <p>
-                <span className="info-label">Theme:</span> CRT-Dark
-              </p>
-              <p>
-                <span className="info-label">Contact:</span>{" "}
-                your.email@example.com
-              </p>
-            </div>
-          </div>
-        ),
-      },
-    ]);
-  };
+        // Restrict to screen boundaries
+        newX = Math.max(0, Math.min(newX, windowWidth - rect.width));
+        newY = Math.max(0, Math.min(newY, windowHeight - rect.height));
 
-  const showAbout = () => {
-    setOutput((prev) => [
-      ...prev,
-      {
-        id: uuidv4(),
-        content: (
-          <div className="about-content">
-            <h2>About Me</h2>
-            <p>
-              I am a passionate developer with experience in building web
-              applications.
-            </p>
-            <p>My journey in tech started with [your background].</p>
-            <p>I specialize in [your specialties].</p>
-          </div>
-        ),
-      },
-    ]);
-  };
+        setPosition({ x: newX, y: newY });
+      }
+    };
 
-  const showEducation = () => {
-    setOutput((prev) => [
-      ...prev,
-      {
-        id: uuidv4(),
-        content: (
-          <div className="education-content">
-            <h2>Education</h2>
-            <div className="education-item">
-              <h3>Degree Name</h3>
-              <p>University Name | 20XX - 20XX</p>
-              <p>Description of your studies and achievements.</p>
-            </div>
-          </div>
-        ),
-      },
-    ]);
-  };
+    const handleMouseUp = () => {
+      setIsDragging(false);
+    };
 
-  const showSkills = () => {
-    setOutput((prev) => [
-      ...prev,
-      {
-        id: uuidv4(),
-        content: (
-          <div className="skills-content">
-            <h2>Skills</h2>
-            <div className="skills-category">
-              <h3>Frontend</h3>
-              <ul className="output-list">
-                <li className="output">HTML, CSS, JavaScript</li>
-                <li className="output">React, Next.js</li>
-                <li className="output">Tailwind CSS</li>
-              </ul>
-            </div>
-            <div className="skills-category">
-              <h3>Backend</h3>
-              <ul className="output-list">
-                <li className="output">Node.js, Express</li>
-                <li className="output">Python, Django</li>
-                <li className="output">Databases: MongoDB, PostgreSQL</li>
-              </ul>
-            </div>
-          </div>
-        ),
-      },
-    ]);
-  };
+    if (isDragging) {
+      window.addEventListener("mousemove", handleMouseMove);
+      window.addEventListener("mouseup", handleMouseUp);
+    }
 
-  const showExperience = () => {
-    setOutput((prev) => [
-      ...prev,
-      {
-        id: uuidv4(),
-        content: (
-          <div className="experience-content">
-            <h2>Experience</h2>
-            <div className="experience-item">
-              <h3>Job Title</h3>
-              <p>Company Name | 20XX - Present</p>
-              <ul className="output-list">
-                <li className="output">Responsibility or achievement 1</li>
-                <li className="output">Responsibility or achievement 2</li>
-                <li className="output">Responsibility or achievement 3</li>
-              </ul>
-            </div>
-          </div>
-        ),
-      },
-    ]);
-  };
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [isDragging, dragOffset]);
 
-  const showProjects = () => {
-    setOutput((prev) => [
-      ...prev,
-      {
-        id: uuidv4(),
-        content: (
-          <div className="projects-content">
-            <h2>Projects</h2>
-            <div className="project-item">
-              <h3>Project Name</h3>
-              <p>Description of the project and your role.</p>
-              <p>Technologies used: React, Node.js, etc.</p>
-              <p>
-                <a
-                  href="https://github.com/yourusername/project"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  GitHub
-                </a>
-                {" | "}
-                <a
-                  href="https://project-demo.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Live Demo
-                </a>
-              </p>
-            </div>
-          </div>
-        ),
-      },
-    ]);
-  };
-
-  const showContact = () => {
-    setOutput((prev) => [
-      ...prev,
-      {
-        id: uuidv4(),
-        content: (
-          <div className="contact-content">
-            <h2>Contact</h2>
-            <div className="contact-item">
-              <p>Email: your.email@example.com</p>
-              <p>
-                <a
-                  href="https://github.com/yourusername"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  GitHub
-                </a>
-                {" | "}
-                <a
-                  href="https://linkedin.com/in/yourusername"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  LinkedIn
-                </a>
-                {" | "}
-                <a
-                  href="https://twitter.com/yourusername"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Twitter
-                </a>
-              </p>
-            </div>
-          </div>
-        ),
-      },
-    ]);
-  };
-
-  const showUnknownCommand = (command: string) => {
-    setOutput((prev) => [
-      ...prev,
-      {
-        id: uuidv4(),
-        content: (
-          <p className="error-message">
-            Command not found: {command}. Type{" "}
-            <span className="command-highlight">help</span> to see available
-            commands.
-          </p>
-        ),
-      },
-    ]);
-  };
+  // Don't render anything if minimized
+  if (isMinimized) {
+    return null;
+  }
 
   return (
-    <div className="win95-window">
-      <TitleBar title="Portfolio Console" />
+    <div
+      ref={consoleRef}
+      className={`win95-window ${isMaximized ? "maximized" : ""}`}
+      style={{
+        left: `${position.x}px`,
+        top: `${position.y}px`,
+        width: `${size.width}px`,
+        height: `${size.height}px`,
+        cursor: isDragging ? "grabbing" : "default",
+      }}
+    >
+      <TitleBar
+        title="Console"
+        onDragStart={handleDragStart}
+        onMinimize={handleMinimize}
+        onMaximize={handleMaximize}
+        isMaximized={isMaximized}
+      />
       <div className="console-container">
         <ConsoleOutput output={output} />
-        <ConsoleInput onCommand={handleCommand} />
+        <ConsoleInput />
       </div>
+
+      {/* Resize handles for all sides and corners - hidden when maximized */}
+      {!isMaximized && (
+        <>
+          <div
+            className="win95-resize-handle top"
+            onMouseDown={handleResizeStart("top")}
+          />
+          <div
+            className="win95-resize-handle right"
+            onMouseDown={handleResizeStart("right")}
+          />
+          <div
+            className="win95-resize-handle bottom"
+            onMouseDown={handleResizeStart("bottom")}
+          />
+          <div
+            className="win95-resize-handle left"
+            onMouseDown={handleResizeStart("left")}
+          />
+          <div
+            className="win95-resize-handle top-left"
+            onMouseDown={handleResizeStart("top-left")}
+          />
+          <div
+            className="win95-resize-handle top-right"
+            onMouseDown={handleResizeStart("top-right")}
+          />
+          <div
+            className="win95-resize-handle bottom-left"
+            onMouseDown={handleResizeStart("bottom-left")}
+          />
+          <div
+            className="win95-resize-handle bottom-right"
+            onMouseDown={handleResizeStart("bottom-right")}
+          />
+        </>
+      )}
     </div>
   );
 }
