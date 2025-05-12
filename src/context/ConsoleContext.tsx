@@ -26,8 +26,10 @@ type ConsoleContextType = {
   activeSection: string;
   isMinimized: boolean;
   isClosed: boolean;
+  selectedIcon: string | null;
   setIsMinimized: (minimized: boolean) => void;
   setIsClosed: (closed: boolean) => void;
+  setSelectedIcon: (iconName: string | null) => void;
   handleCommand: (command: string) => void;
   setActiveSection: (section: string) => void;
   resetOutput: () => void;
@@ -48,6 +50,7 @@ export function ConsoleProvider({ children }: { children: ReactNode }) {
   const [activeSection, setActiveSection] = useState("home");
   const [isMinimized, setIsMinimized] = useState(false);
   const [isClosed, setIsClosed] = useState(false);
+  const [selectedIcon, setSelectedIcon] = useState<string | null>(null);
 
   // Add welcome message on initial load
   React.useEffect(() => {
@@ -476,8 +479,10 @@ export function ConsoleProvider({ children }: { children: ReactNode }) {
         activeSection,
         isMinimized,
         isClosed,
+        selectedIcon,
         setIsMinimized,
         setIsClosed,
+        setSelectedIcon,
         handleCommand,
         setActiveSection,
         resetOutput,

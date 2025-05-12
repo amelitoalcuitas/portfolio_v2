@@ -76,7 +76,7 @@ export default function Taskbar() {
           }}
         >
           <span className="win95-start-logo">⊞</span>
-          <span className="win95-start-text">Start</span>
+          <span className="win95-start-text">Menu</span>
         </button>
         {showMenu && (
           <div

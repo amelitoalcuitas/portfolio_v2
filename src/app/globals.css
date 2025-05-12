@@ -114,6 +114,11 @@ body {
   border: 1px dotted #ffffff;
 }
 
+.win95-desktop-icon-selected {
+  background-color: rgba(0, 0, 128, 0.3);
+  border: 1px dotted #ffffff;
+}
+
 .win95-desktop-icon-img {
   font-size: 32px;
   margin-bottom: 5px;

@@ -14,6 +14,7 @@ export default function Console() {
     isClosed,
     setIsClosed,
     resetOutput,
+    handleCommand,
   } = useConsole();
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [size, setSize] = useState({ width: 800, height: 600 });
@@ -117,7 +118,17 @@ export default function Console() {
     }, 100); // Small delay to ensure accurate measurements
 
     return () => clearTimeout(timer);
-  }, [size.width, size.height]); // Include size dependencies
+  }, []); // Empty dependency array ensures this effect runs once after initial render
+
+  // Initiate "home" command when the component mounts - only once
+  const initialRenderRef = useRef(true);
+  useEffect(() => {
+    if (initialRenderRef.current) {
+      // Execute the home command on initial mount only
+      handleCommand("home");
+      initialRenderRef.current = false;
+    }
+  }, [handleCommand]); // Include handleCommand in dependencies, but use ref to ensure it only runs once
 
   // Resize direction types
   type ResizeDirection =
