@@ -7,8 +7,14 @@ import TitleBar from "./TitleBar";
 import { useConsole } from "@/context/ConsoleContext";
 
 export default function Console() {
-  const { output, isMinimized, setIsMinimized, isClosed, setIsClosed } =
-    useConsole();
+  const {
+    output,
+    isMinimized,
+    setIsMinimized,
+    isClosed,
+    setIsClosed,
+    resetOutput,
+  } = useConsole();
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [size, setSize] = useState({ width: 800, height: 600 });
   const [isDragging, setIsDragging] = useState(false);
@@ -31,6 +37,8 @@ export default function Console() {
   const MIN_WIDTH = 400;
   const MIN_HEIGHT = 300;
 
+  const TASKBAR_HEIGHT = 30; // Height of the Windows 95 taskbar
+
   // Handle minimize functionality
   const handleMinimize = () => {
     // Toggle minimized state in context
@@ -39,6 +47,8 @@ export default function Console() {
 
   // Handle close functionality
   const handleClose = () => {
+    // Reset the output before closing
+    resetOutput();
     // Set closed state to true
     setIsClosed(true);
   };
@@ -81,7 +91,6 @@ export default function Console() {
       });
 
       // Maximize the window to fill the screen, accounting for taskbar height
-      const TASKBAR_HEIGHT = 30; // Height of the Windows 95 taskbar
       setIsMaximized(true);
       setPosition({ x: 0, y: 0 });
       setSize({
@@ -108,7 +117,7 @@ export default function Console() {
     }, 100); // Small delay to ensure accurate measurements
 
     return () => clearTimeout(timer);
-  }, []); // Include size dependencies
+  }, [size.width, size.height]); // Include size dependencies
 
   // Resize direction types
   type ResizeDirection =
@@ -329,7 +338,10 @@ export default function Console() {
 
         // Restrict to screen boundaries
         newX = Math.max(0, Math.min(newX, windowWidth - rect.width));
-        newY = Math.max(0, Math.min(newY, windowHeight - rect.height));
+        newY = Math.max(
+          0,
+          Math.min(newY, windowHeight - rect.height - TASKBAR_HEIGHT)
+        );
 
         setPosition({ x: newX, y: newY });
       }

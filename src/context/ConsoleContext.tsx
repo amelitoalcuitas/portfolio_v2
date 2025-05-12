@@ -30,6 +30,7 @@ type ConsoleContextType = {
   setIsClosed: (closed: boolean) => void;
   handleCommand: (command: string) => void;
   setActiveSection: (section: string) => void;
+  resetOutput: () => void;
 };
 
 // Create the context
@@ -192,6 +193,24 @@ export function ConsoleProvider({ children }: { children: ReactNode }) {
 
   const clearConsole = () => {
     setOutput([]);
+  };
+
+  // Reset output to initial welcome message
+  const resetOutput = () => {
+    setOutput([
+      {
+        id: uuidv4(),
+        content: (
+          <div className="welcome-message">
+            <p>Welcome to the Portfolio Terminal</p>
+            <p>
+              Type <span className="command-highlight">help</span> to see
+              available commands
+            </p>
+          </div>
+        ),
+      },
+    ]);
   };
 
   const listSections = () => {
@@ -461,6 +480,7 @@ export function ConsoleProvider({ children }: { children: ReactNode }) {
         setIsClosed,
         handleCommand,
         setActiveSection,
+        resetOutput,
       }}
     >
       {children}

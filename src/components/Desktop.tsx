@@ -15,11 +15,7 @@ export default function Desktop() {
 
   return (
     <div className="win95-desktop">
-      <DesktopIcon
-        name="Console"
-        icon="📄"
-        onClick={handleConsoleIconClick}
-      />
+      <DesktopIcon name="Console" onClick={handleConsoleIconClick} />
     </div>
   );
 }

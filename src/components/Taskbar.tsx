@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useConsole, SECTIONS } from "@/context/ConsoleContext";
+import Image from "next/image";
 
 // Map section IDs to appropriate icons
 const SECTION_ICONS: Record<string, string> = {
@@ -115,7 +116,9 @@ export default function Taskbar() {
               }
             }}
           >
-            <span className="win95-taskbar-item-icon">📄</span>
+            <span className="win95-taskbar-item-icon">
+              <Image src="/exe.png" alt="Console" width={16} height={16} />
+            </span>
             <span className="win95-taskbar-item-text">Console</span>
           </button>
         )}

@@ -1,6 +1,7 @@
 "use client";
 
 import { MouseEvent } from "react";
+import Image from "next/image";
 
 interface TitleBarProps {
   title: string;
@@ -26,7 +27,9 @@ export default function TitleBar({
       style={{ cursor: onDragStart && !isMaximized ? "grab" : "default" }}
     >
       <div className="win95-title-content">
-        <span className="win95-logo">📄</span>
+        <span className="win95-logo">
+          <Image src="/exe.png" alt="Logo" width={16} height={16} />
+        </span>
         <div className="win95-title-text">{title}</div>
       </div>
       <div className="win95-title-buttons">

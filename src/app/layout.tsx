@@ -13,8 +13,12 @@ const vt323 = VT323({
 });
 
 export const metadata: Metadata = {
-  title: "Console",
+  title: "Amelito Alcuitas | Portfolio",
   description: "A Windows 95-style terminal portfolio with console interface",
+  icons: {
+    icon: "/exe.png",
+    apple: "/exe.png",
+  },
 };
 
 export default function RootLayout({
