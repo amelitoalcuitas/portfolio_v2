@@ -5,6 +5,21 @@
   --foreground: rgba(128, 128, 128, 0.8);
   --error-color: #ffffff;
   --link-color: #ffffff;
+  --console-prompt-color: #00ff00;
+  --command-highlight-color: #00ff00;
+  --active-section-color: #ffffff;
+
+  /* Windows 95 colors */
+  --win95-bg: #c0c0c0;
+  --win95-border-light: #ffffff;
+  --win95-border-dark: #808080;
+  --win95-border-darker: #404040;
+  --win95-title-bg: #000080;
+  --win95-title-text: #ffffff;
+  --win95-button-face: #c0c0c0;
+  --win95-button-highlight: #ffffff;
+  --win95-button-shadow: #808080;
+  --win95-button-text: #000000;
 }
 
 html {
@@ -14,10 +29,11 @@ html {
 body {
   box-sizing: border-box;
   height: 100%;
-  background-color: #000000;
-  background-image: radial-gradient(#333, #111);
-  font-family: var(--font-inconsolata), monospace;
-  font-size: 1.5rem;
+  background-color: #008080; /* Windows 95 teal background */
+  font-family: var(--font-vt323), monospace;
+  font-size: 1.6rem;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
   color: var(--foreground);
   text-shadow: 0 0 1ex rgba(51, 51, 51, 1), 0 0 2px rgba(255, 255, 255, 0.8);
   margin: 0;
@@ -67,58 +83,26 @@ body {
   height: 100%;
   width: 100%;
   max-width: 100%;
-  text-transform: uppercase;
   display: flex;
   flex-direction: column;
   overflow: hidden;
 }
 
-.terminal-header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  background-color: rgb(30, 30, 30);
-  padding: 1rem 4rem;
-  z-index: 10;
-  border-bottom: 1px solid rgba(128, 128, 128, 0.3);
-}
-
-.terminal-navigation {
-  margin-top: 1rem;
-}
+/* Terminal header and navigation removed - unused */
 
 .terminal-content {
   flex: 1;
-  overflow-y: auto;
-  padding: 8rem 4rem 6rem 4rem;
+  overflow: hidden; /* Changed from scroll to hidden to remove scrollbar */
+  padding: 0;
   height: 100vh;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(128, 128, 128, 0.5) rgba(0, 0, 0, 0.1);
 }
 
-.terminal-content::-webkit-scrollbar {
-  width: 8px;
-}
-
-.terminal-content::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.1);
-}
-
-.terminal-content::-webkit-scrollbar-thumb {
-  background-color: rgba(128, 128, 128, 0.5);
-  border-radius: 4px;
-}
-
-.terminal-footer {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background-color: rgba(30, 30, 30);
-  padding: 1rem 4rem;
-  z-index: 10;
-  border-top: 1px solid rgba(128, 128, 128, 0.3);
+.win95-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #008080; /* Classic Windows 95 teal background */
+  padding: 20px;
 }
 
 .output {
@@ -146,7 +130,6 @@ a::after {
 
 /* Heading styles */
 h1, h2, h3 {
-  text-transform: uppercase;
   margin-bottom: 0.5rem;
 }
 
@@ -166,128 +149,258 @@ h3 {
   letter-spacing: 0.03em;
 }
 
-/* Navigation styles */
-.navigation {
+/* Navigation styles removed - unused */
+
+/* Section styles removed - unused */
+
+/* Console styles */
+.console-container {
   display: flex;
-  flex-wrap: wrap;
-  padding: 0.5rem 0;
-  position: relative;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
 }
 
-.navigation::after {
-  content: "Use ← → arrow keys to navigate";
-  position: absolute;
-  right: 0;
-  bottom: -1.2rem;
-  font-size: 0.8rem;
-  opacity: 0.6;
-  text-transform: uppercase;
-}
-
-.nav-item {
-  display: inline-block;
-  margin-right: 1.5rem;
-  cursor: pointer;
-  padding: 0.25rem 0.5rem;
-  transition: all 0.3s ease;
-  position: relative;
-  text-transform: uppercase;
-  color: var(--foreground);
-}
-
-.nav-item:hover {
-  color: var(--error-color);
-  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
-}
-
-.nav-item.active {
-  color: var(--error-color);
-  text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
-  font-weight: bold;
-  animation: pulse 0.5s ease-in-out;
-}
-
-@keyframes pulse {
-  0% { text-shadow: 0 0 5px rgba(255, 255, 255, 0.5); }
-  50% { text-shadow: 0 0 15px rgba(255, 255, 255, 0.8); }
-  100% { text-shadow: 0 0 5px rgba(255, 255, 255, 0.5); }
-}
-
-/* Remove the default link styling for navigation */
-.nav-item::before,
-.nav-item::after {
-  content: none;
-}
-
-.nav-prefix {
-  display: inline-block;
-  width: 1rem;
-  text-align: center;
-  margin-right: 0.25rem;
-}
-
-/* Section styles */
-.section {
-  display: none;
-  margin-top: 2rem;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  padding-bottom: 2rem;
-  border-bottom: 1px solid rgba(128, 128, 128, 0.2);
-}
-
-.section.active {
-  display: block;
-  opacity: 1;
-  animation: fadeIn 0.5s ease-in-out;
-}
-
-.section-content {
-  padding: 1rem 0;
-}
-
-/* Section-specific styles */
-.section-home {
-  min-height: 200px;
-}
-
-.section-home .image-placeholder {
-  margin-top: 1.5rem;
-  height: 200px;
-  border: 1px dashed rgba(128, 128, 128, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-transform: none;
-}
-
-.section-projects .project-item {
-  margin-bottom: 2rem;
+.console-output {
+  flex: 1;
+  overflow-y: scroll; /* Changed from auto to scroll to always show scrollbar */
   padding-bottom: 1rem;
-  border-bottom: 1px dotted rgba(128, 128, 128, 0.3);
+  padding-right: 4px; /* Add padding for the scrollbar */
 }
 
-.section-projects .image-placeholder {
-  margin: 1rem 0;
-  height: 150px;
-  border: 1px dashed rgba(128, 128, 128, 0.5);
+/* Scrollbar container */
+::-webkit-scrollbar {
+  width: 16px;
+  height: 16px;
+}
+
+/* Scrollbar track */
+::-webkit-scrollbar-track {
+  background: #c0c0c0; /* light gray */
+  border-left: 1px solid #808080;
+  border-top: 1px solid #808080;
+  border-right: 1px solid #fff;
+  border-bottom: 1px solid #fff;
+}
+
+/* Scrollbar thumb */
+::-webkit-scrollbar-thumb {
+  background: #c0c0c0;
+  border-left: 1px solid #fff;
+  border-top: 1px solid #fff;
+  border-right: 1px solid #808080;
+  border-bottom: 1px solid #808080;
+  box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #808080;
+}
+
+/* Optional: hover effect */
+::-webkit-scrollbar-thumb:hover {
+  background: #a0a0a0;
+}
+
+.output-item {
+  margin-bottom: 1rem;
+}
+
+.console-input-container {
   display: flex;
   align-items: center;
+  padding: 0.5rem 0;
+  border-top: 1px solid rgba(128, 128, 128, 0.3);
+}
+
+.console-prompt {
+  color: var(--console-prompt-color);
+  margin-right: 0.5rem;
+}
+
+.console-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--foreground);
+  font-family: inherit;
+  font-size: inherit;
+  outline: none;
+  caret-color: var(--console-prompt-color);
+}
+
+.command-entry {
+  display: flex;
+  align-items: center;
+}
+
+.command-text {
+  margin-left: 0.5rem;
+}
+
+.command-highlight {
+  color: var(--command-highlight-color);
+}
+
+.error-message {
+  color: #ff6b6b;
+}
+
+.help-content, .sections-list {
+  margin-top: 0.5rem;
+}
+
+.command-list, .sections-list-items {
+  list-style-type: none;
+  padding-left: 1rem;
+  margin: 0.5rem 0;
+}
+
+.active-section {
+  color: var(--active-section-color);
+}
+
+.section-prefix {
+  color: var(--console-prompt-color);
+  margin-right: 0.5rem;
+}
+
+/* Neofetch-style output */
+.neofetch-output {
+  display: flex;
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.ascii-art {
+  color: var(--console-prompt-color);
+  margin-right: 2rem;
+  font-size: 0.65rem;
+  line-height: 1.1;
+  letter-spacing: 0;
+}
+
+.neofetch-info {
+  display: flex;
+  flex-direction: column;
   justify-content: center;
-  text-transform: none;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0.3; }
-  to { opacity: 1; }
+.info-label {
+  color: var(--command-highlight-color);
+  margin-right: 0.5rem;
 }
 
-/* Section divider */
-.section-divider {
-  height: 1px;
-  background: linear-gradient(to right, rgba(128, 128, 128, 0.1), rgba(128, 128, 128, 0.5), rgba(128, 128, 128, 0.1));
-  margin: 1rem 0 1.5rem 0;
+.welcome-message {
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background-color: rgba(0, 0, 0, 0.2);
 }
+
+/* Windows 95 styles */
+.win95-window {
+  position: relative;
+  width: 90%;
+  height: 90%;
+  max-width: 1200px;
+  max-height: 800px;
+  min-height: 600px; /* Ensure minimum height */
+  background-color: var(--win95-bg);
+  border: 2px solid;
+  border-color: var(--win95-border-light) var(--win95-border-darker) var(--win95-border-darker) var(--win95-border-light);
+  box-shadow: 1px 1px 0 1px var(--win95-border-dark), 2px 2px 5px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.win95-title-bar {
+  background-color: var(--win95-title-bg);
+  color: var(--win95-title-text);
+  padding: 4px 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 30px;
+  font-size: 1.2rem;
+  font-weight: normal; /* VT323 looks better without bold */
+  letter-spacing: 0.05em;
+  user-select: none;
+}
+
+.win95-title-content {
+  display: flex;
+  align-items: center;
+}
+
+.win95-logo {
+  font-size: 16px;
+  margin-right: 6px;
+}
+
+.win95-title-text {
+  margin-left: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: 0.5px;
+}
+
+.win95-title-buttons {
+  display: flex;
+  align-items: center;
+}
+
+.win95-button {
+  width: 24px;
+  height: 22px;
+  margin-left: 4px;
+  background-color: var(--win95-button-face);
+  border: 1px solid;
+  border-color: var(--win95-border-light) var(--win95-border-darker) var(--win95-border-darker) var(--win95-border-light);
+  box-shadow: 1px 1px 0 0 var(--win95-border-dark);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 14px;
+  line-height: 1;
+  padding: 0;
+  color: var(--win95-button-text);
+  cursor: pointer;
+}
+
+.win95-button:active {
+  border-color: var(--win95-border-darker) var(--win95-border-light) var(--win95-border-light) var(--win95-border-darker);
+  box-shadow: inset 1px 1px 0 0 var(--win95-border-dark);
+}
+
+.win95-button-icon {
+  display: inline-block;
+  transform: translateY(-1px);
+}
+
+.win95-minimize .win95-button-icon {
+  transform: translateY(-4px);
+  font-size: 16px;
+}
+
+.win95-close .win95-button-icon {
+  font-size: 18px;
+}
+
+/* Adjust console container to fit inside the Win95 window */
+.console-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--background);
+  border: 2px solid;
+  border-color: var(--win95-border-darker) var(--win95-border-light) var(--win95-border-light) var(--win95-border-darker);
+  margin: 2px;
+  overflow: hidden;
+}
+
+/* Fade animation removed */
+
+/* Section divider removed - unused */
 
 /* Category styles */
 .skills-category, .education-item, .experience-item, .contact-item {
@@ -311,22 +424,6 @@ h3 {
   content: "- ";
 }
 
-/* Contact details */
-.contact-details {
-  margin-top: 1rem;
-  padding: 1rem;
-  border: 1px solid rgba(128, 128, 128, 0.3);
-  background-color: rgba(0, 0, 0, 0.2);
-}
+/* Contact details and typing animation removed - unused */
 
-/* Typing animation */
-.typing {
-  overflow: hidden;
-  white-space: nowrap;
-  animation: typing 3.5s steps(40, end);
-}
-
-@keyframes typing {
-  from { width: 0 }
-  to { width: 100% }
-}
+/* Autocomplete styles removed - not needed */

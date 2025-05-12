@@ -1,28 +1,29 @@
-import type { Metadata } from "next";
-import { Inconsolata } from "next/font/google";
 import "./globals.css";
+import type { Metadata } from "next";
+import { VT323 } from "next/font/google";
 
-const inconsolata = Inconsolata({
+const vt323 = VT323({
+  weight: "400",
   subsets: ["latin"],
-  variable: "--font-inconsolata",
+  variable: "--font-vt323",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "CRT Portfolio",
-  description: "A retro CRT-style portfolio website",
+  title: "Portfolio Console",
+  description: "A Windows 95-style terminal portfolio with console interface",
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
-      <body
-        className={`${inconsolata.variable} antialiased`}
-      >
-        {children}
+      <body className={vt323.variable}>
+        <div className="overlay"></div>
+        <div className="terminal">{children}</div>
       </body>
     </html>
   );
