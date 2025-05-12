@@ -1,6 +1,7 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import { VT323 } from "next/font/google";
+import Taskbar from "@/components/Taskbar";
 
 const vt323 = VT323({
   weight: "400",
@@ -23,7 +24,10 @@ export default function RootLayout({
     <html lang="en">
       <body className={vt323.variable}>
         <div className="overlay"></div>
-        <div className="terminal">{children}</div>
+        <div className="desktop-container">
+          <div className="terminal">{children}</div>
+          <Taskbar />
+        </div>
       </body>
     </html>
   );

@@ -35,10 +35,11 @@ body {
   line-height: 1.2;
   letter-spacing: 0.02em;
   color: var(--foreground);
-  text-shadow: 0 0 1ex rgba(51, 51, 51, 1), 0 0 2px rgba(255, 255, 255, 0.8);
   margin: 0;
   padding: 0;
   overflow: hidden; /* Prevent body scrolling */
+  display: flex;
+  flex-direction: column;
 }
 
 .overlay {
@@ -77,12 +78,18 @@ body {
   35%, 100% { background-position: 0 100vh; }
 }
 
+.desktop-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+}
+
 .terminal {
   box-sizing: inherit;
-  position: absolute;
-  height: 100%;
+  flex: 1;
   width: 100%;
-  max-width: 100%;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -102,7 +109,8 @@ body {
   justify-content: center;
   align-items: center;
   background-color: #008080; /* Classic Windows 95 teal background */
-  padding: 20px;
+  padding: 20px 20px 0 20px; /* Remove bottom padding to make room for taskbar */
+  flex: 1; /* Take up available space */
 }
 
 .output {
@@ -310,6 +318,110 @@ h3 {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+}
+
+/* Windows 95 Taskbar styles */
+.win95-taskbar {
+  height: 30px;
+  background-color: var(--win95-bg);
+  border-top: 2px solid var(--win95-border-light);
+  box-shadow: 0 -1px 0 var(--win95-border-dark); /* Add subtle shadow for 3D effect */
+  color: #000;
+  display: flex;
+  align-items: center;
+  padding: 0 2px;
+  z-index: 1000;
+}
+
+.win95-taskbar-start {
+  margin-right: 6px;
+}
+
+.win95-start-button {
+  height: 24px;
+  display: flex;
+  align-items: center;
+  padding: 0 4px;
+  background-color: var(--win95-button-face);
+  border: 2px solid;
+  border-color: var(--win95-border-light) var(--win95-border-darker) var(--win95-border-darker) var(--win95-border-light);
+  font-family: inherit;
+  font-size: 1rem;
+  cursor: default;
+}
+
+.win95-start-logo {
+  margin-right: 4px;
+  font-size: 16px;
+}
+
+.win95-start-text {
+  font-weight: bold;
+}
+
+.win95-taskbar-items {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.win95-taskbar-item {
+  height: 24px;
+  display: flex;
+  align-items: center;
+  padding: 0 6px;
+  margin-right: 2px;
+  background-color: var(--win95-button-face);
+  border: 2px solid;
+  border-color: var(--win95-border-light) var(--win95-border-darker) var(--win95-border-darker) var(--win95-border-light);
+  font-family: inherit;
+  font-size: 0.9rem;
+  cursor: default;
+  min-width: 160px;
+  max-width: 200px;
+}
+
+.win95-taskbar-item-active {
+  border-color: var(--win95-border-darker) var(--win95-border-light) var(--win95-border-light) var(--win95-border-darker);
+  background-color: var(--win95-bg);
+}
+
+.win95-taskbar-item-icon {
+  margin-right: 4px;
+  font-size: 14px;
+}
+
+.win95-taskbar-item-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.win95-taskbar-tray {
+  display: flex;
+  align-items: center;
+  height: 24px;
+  border: 2px solid;
+  border-color: var(--win95-border-darker) var(--win95-border-light) var(--win95-border-light) var(--win95-border-darker);
+  padding: 0 4px;
+  margin-left: 6px;
+}
+
+.win95-tray-icons {
+  display: flex;
+  align-items: center;
+  margin-right: 8px;
+}
+
+.win95-tray-icon {
+  margin: 0 2px;
+  font-size: 14px;
+}
+
+.win95-taskbar-clock {
+  font-size: 0.9rem;
+  min-width: 45px;
+  text-align: center;
 }
 
 .win95-title-bar {

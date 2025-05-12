@@ -8,7 +8,7 @@ export default function TitleBar({ title }: TitleBarProps) {
   return (
     <div className="win95-title-bar">
       <div className="win95-title-content">
-        <span className="win95-logo">⊞</span>
+        <span className="win95-logo">📄</span>
         <div className="win95-title-text">{title}</div>
       </div>
       <div className="win95-title-buttons">
