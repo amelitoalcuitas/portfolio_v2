@@ -1,103 +1,148 @@
-import Image from "next/image";
+'use client';
+
+import { useState } from 'react';
+import Terminal from '@/components/Terminal';
+import Navigation from '@/components/Navigation';
+import Section from '@/components/Section';
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [activeSection, setActiveSection] = useState('home');
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  return (
+    <Terminal
+      header={<h1>Welcome <span className="errorcode">v1.0</span></h1>}
+      navigation={<Navigation activeSection={activeSection} setActiveSection={setActiveSection} />}
+      content={
+        <>
+          <Section id="home" activeSection={activeSection}>
+            <h2>Home <span className="errorcode">Terminal</span></h2>
+            <div className="section-divider"></div>
+            <p className="output typing">{'>'} Welcome to my portfolio. Navigate through the sections to learn more about me.</p>
+            <p className="output">{'>'} Use the navigation links above or press the ← → arrow keys to navigate between sections.</p>
+
+            {/* Image placeholder - will be replaced with actual image later */}
+            <div className="image-placeholder">
+              <span>Profile Image Placeholder - Will be added later</span>
+            </div>
+          </Section>
+
+          <Section id="about" activeSection={activeSection}>
+            <h2>About <span className="errorcode">Me</span></h2>
+            <div className="section-divider"></div>
+            <p className="output">I am a passionate developer with a love for creating elegant solutions to complex problems.</p>
+            <p className="output">My journey in technology began with a curiosity about how things work, which evolved into a career in software development.</p>
+            <p className="output">With a focus on user experience and clean code, I strive to build applications that are both functional and intuitive.</p>
+          </Section>
+
+          <Section id="education" activeSection={activeSection}>
+            <h2>Education <span className="errorcode">Path</span></h2>
+            <div className="section-divider"></div>
+            <div className="education-item">
+              <h3 className="output">Bachelor of Science in Computer Science</h3>
+              <p className="output">University of Technology, 2018-2022</p>
+              <p className="output">Relevant coursework:</p>
+              <ul className="output-list">
+                <li className="output">Data Structures and Algorithms</li>
+                <li className="output">Web Development</li>
+                <li className="output">Database Systems</li>
+                <li className="output">Software Engineering</li>
+              </ul>
+            </div>
+          </Section>
+
+          <Section id="skills" activeSection={activeSection}>
+            <h2>Skills <span className="errorcode">Matrix</span></h2>
+            <div className="section-divider"></div>
+            <div className="skills-category">
+              <h3 className="output">Languages</h3>
+              <p className="output">JavaScript, TypeScript, Python, Java</p>
+            </div>
+
+            <div className="skills-category">
+              <h3 className="output">Frontend</h3>
+              <p className="output">React, Next.js, HTML, CSS, Tailwind</p>
+            </div>
+
+            <div className="skills-category">
+              <h3 className="output">Backend</h3>
+              <p className="output">Node.js, Express, Django</p>
+            </div>
+
+            <div className="skills-category">
+              <h3 className="output">Database</h3>
+              <p className="output">MongoDB, PostgreSQL, MySQL</p>
+            </div>
+
+            <div className="skills-category">
+              <h3 className="output">Tools</h3>
+              <p className="output">Git, Docker, AWS, Figma</p>
+            </div>
+          </Section>
+
+          <Section id="experience" activeSection={activeSection}>
+            <h2>Experience <span className="errorcode">Log</span></h2>
+            <div className="section-divider"></div>
+            <div className="experience-item">
+              <h3 className="output">Senior Frontend Developer</h3>
+              <p className="output">Tech Innovations Inc., 2022-Present</p>
+              <ul className="output-list">
+                <li className="output">Developed and maintained multiple React applications</li>
+                <li className="output">Collaborated with UX/UI designers to implement responsive designs</li>
+                <li className="output">Mentored junior developers and conducted code reviews</li>
+                <li className="output">Implemented CI/CD pipelines for automated testing and deployment</li>
+              </ul>
+            </div>
+          </Section>
+
+          <Section id="projects" activeSection={activeSection}>
+            <h2>Projects <span className="errorcode">Showcase</span></h2>
+            <div className="section-divider"></div>
+
+            <div className="project-item">
+              <h3 className="output">Project 1: E-commerce Platform</h3>
+              <p className="output">A full-stack application built with React, Node.js, and MongoDB.</p>
+              <p className="output">Features include user authentication, product catalog, shopping cart, and payment processing.</p>
+
+              {/* Image placeholder - will be replaced with actual project image later */}
+              <div className="image-placeholder">
+                <span>Project 1 Screenshot - Will be added later</span>
+              </div>
+            </div>
+
+            <div className="project-item">
+              <h3 className="output">Project 2: Weather App</h3>
+              <p className="output">A mobile application that provides real-time weather updates using OpenWeatherMap API.</p>
+              <p className="output">Features include location-based forecasts, hourly and daily predictions, and weather alerts.</p>
+
+              {/* Image placeholder - will be replaced with actual project image later */}
+              <div className="image-placeholder">
+                <span>Project 2 Screenshot - Will be added later</span>
+              </div>
+            </div>
+          </Section>
+
+          <Section id="contact" activeSection={activeSection}>
+            <h2>Contact <span className="errorcode">Terminal</span></h2>
+            <div className="section-divider"></div>
+            <div className="contact-item">
+              <h3 className="output">Get In Touch</h3>
+              <p className="output">Feel free to reach out for collaborations or just a friendly chat.</p>
+
+              <div className="contact-details">
+                <p className="output">Email: developer@example.com</p>
+                <p className="output">GitHub: github.com/developer</p>
+                <p className="output">LinkedIn: linkedin.com/in/developer</p>
+                <p className="output">Twitter: @developer</p>
+              </div>
+            </div>
+          </Section>
+        </>
+      }
+      footer={
+        <div className="output">
+          <p> {'>'} © 2024 | Built with Next.js and a passion for retro aesthetics</p>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+      }
+    />
   );
 }
