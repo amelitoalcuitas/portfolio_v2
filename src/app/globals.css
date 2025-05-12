@@ -706,7 +706,7 @@ h3 {
   margin-bottom: 1.5rem;
 }
 
-.skills-category h3, .education-item h3, .experience-item h3, .contact-item h3 {
+.category-title {
   margin-bottom: 0.5rem;
   color: var(--foreground);
 }
@@ -720,6 +720,14 @@ h3 {
 
 .output-list li.output::before {
   content: "- ";
+}
+
+/* Under construction message */
+.under-construction {
+  font-size: 1.2rem;
+  color: #ffcc00;
+  margin-bottom: 1rem;
+  text-align: center;
 }
 
 /* Contact details and typing animation removed - unused */

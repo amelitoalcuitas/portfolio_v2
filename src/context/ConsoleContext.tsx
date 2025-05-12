@@ -44,6 +44,18 @@ const getCurrentTime = () => {
   return now.toLocaleTimeString("en-US", { hour12: false });
 };
 
+// Helper function to generate a percentage bar
+const generatePercentageBar = (percentage: number) => {
+  const totalLength = 10;
+  const filledLength = Math.round((percentage / 100) * totalLength);
+  const emptyLength = totalLength - filledLength;
+
+  const filled = "=".repeat(filledLength);
+  const empty = "-".repeat(emptyLength);
+
+  return `[${filled}${empty}] ${percentage}%`;
+};
+
 // Provider component
 export function ConsoleProvider({ children }: { children: ReactNode }) {
   const [output, setOutput] = useState<OutputItem[]>([]);
@@ -275,11 +287,20 @@ export function ConsoleProvider({ children }: { children: ReactNode }) {
             </div>
             <div className="neofetch-info">
               <p>
-                <span className="info-label">Name:</span> Your Name
+                <span className="info-label">Name:</span> Amelito N. Alcuitas
+                Jr.
               </p>
               <p>
                 <span className="info-label">Email:</span>{" "}
-                your.email@example.com
+                amelitoalcuitasjr@gmail.com
+              </p>
+              <p>
+                <span className="info-label">Role:</span> Full Stack Web
+                Developer
+              </p>
+              <p>
+                <span className="info-label">Location:</span> Pagadian City,
+                Philippines
               </p>
             </div>
           </div>
@@ -297,11 +318,15 @@ export function ConsoleProvider({ children }: { children: ReactNode }) {
           <div className="about-content">
             <h2>About Me</h2>
             <p>
-              I am a passionate developer with experience in building web
-              applications.
+              I am a Full Stack Developer with 5+ years of experience building
+              scalable web and mobile applications. Strong in debugging,
+              performance optimization, and clean, maintainable code.
             </p>
-            <p>My journey in tech started with [your background].</p>
-            <p>I specialize in [your specialties].</p>
+            <p>
+              I specialize in full-stack development with a focus on performance
+              and UX, collaborating with remote teams across the full
+              development lifecycle.
+            </p>
           </div>
         ),
       },
@@ -317,9 +342,11 @@ export function ConsoleProvider({ children }: { children: ReactNode }) {
           <div className="education-content">
             <h2>Education</h2>
             <div className="education-item">
-              <h3>Degree Name</h3>
-              <p>University Name | 20XX - 20XX</p>
-              <p>Description of your studies and achievements.</p>
+              <p className="category-title">
+                Bachelor of Science in Information and Communications Technology
+              </p>
+              <p>University of San Carlos | 2012 - 2017</p>
+              <p>Dean&apos;s Lister, A.Y. 2015 - 2016, A.Y. 2016 - 2017</p>
             </div>
           </div>
         ),
@@ -328,6 +355,37 @@ export function ConsoleProvider({ children }: { children: ReactNode }) {
   };
 
   const showSkills = () => {
+    // Define skills data
+    const frontendSkills = [
+      { name: "HTML/CSS", level: "Expert", percentage: 95 },
+      { name: "JavaScript/TypeScript", level: "Expert", percentage: 95 },
+      { name: "Vue.js", level: "Expert", percentage: 90 },
+      { name: "React", level: "Intermediate", percentage: 75 },
+      { name: "Flutter", level: "Advanced", percentage: 85 },
+    ];
+
+    const backendSkills = [
+      { name: "Node.js", level: "Advanced", percentage: 85 },
+      { name: "Express.js", level: "Advanced", percentage: 85 },
+      { name: "Laravel", level: "Basic", percentage: 50 },
+      { name: "PHP", level: "Basic", percentage: 50 },
+    ];
+
+    const databaseSkills = [
+      { name: "MongoDB", level: "Advanced", percentage: 85 },
+      { name: "MySQL", level: "Advanced", percentage: 80 },
+      { name: "PostgreSQL", level: "Intermediate", percentage: 75 },
+      { name: "Firebase", level: "Advanced", percentage: 85 },
+    ];
+
+    const toolsSkills = [
+      { name: "Git", level: "Advanced", percentage: 90 },
+      { name: "Docker", level: "Basic", percentage: 50 },
+      { name: "Postman", level: "Advanced", percentage: 60 },
+      { name: "VSCode", level: "Expert", percentage: 95 },
+      { name: "AI Tools", level: "Advanced", percentage: 90 },
+    ];
+
     setOutput((prev) => [
       ...prev,
       {
@@ -336,19 +394,43 @@ export function ConsoleProvider({ children }: { children: ReactNode }) {
           <div className="skills-content">
             <h2>Skills</h2>
             <div className="skills-category">
-              <h3>Frontend</h3>
+              <p className="category-title">Front-End</p>
               <ul className="output-list">
-                <li className="output">HTML, CSS, JavaScript</li>
-                <li className="output">React, Next.js</li>
-                <li className="output">Tailwind CSS</li>
+                {frontendSkills.map((skill, index) => (
+                  <li key={index} className="output">
+                    {skill.name} {generatePercentageBar(skill.percentage)}
+                  </li>
+                ))}
               </ul>
             </div>
             <div className="skills-category">
-              <h3>Backend</h3>
+              <p className="category-title">Back-End</p>
               <ul className="output-list">
-                <li className="output">Node.js, Express</li>
-                <li className="output">Python, Django</li>
-                <li className="output">Databases: MongoDB, PostgreSQL</li>
+                {backendSkills.map((skill, index) => (
+                  <li key={index} className="output">
+                    {skill.name} {generatePercentageBar(skill.percentage)}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="skills-category">
+              <p className="category-title">Databases</p>
+              <ul className="output-list">
+                {databaseSkills.map((skill, index) => (
+                  <li key={index} className="output">
+                    {skill.name} {generatePercentageBar(skill.percentage)}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="skills-category">
+              <p className="category-title">Tools</p>
+              <ul className="output-list">
+                {toolsSkills.map((skill, index) => (
+                  <li key={index} className="output">
+                    {skill.name} {generatePercentageBar(skill.percentage)}
+                  </li>
+                ))}
               </ul>
             </div>
           </div>
@@ -366,13 +448,70 @@ export function ConsoleProvider({ children }: { children: ReactNode }) {
           <div className="experience-content">
             <h2>Experience</h2>
             <div className="experience-item">
-              <h3>Job Title</h3>
-              <p>Company Name | 20XX - Present</p>
+              <p className="category-title">Full Stack Web Developer</p>
+              <p>Lanex Corporation | 2021 - Present</p>
               <ul className="output-list">
-                <li className="output">Responsibility or achievement 1</li>
-                <li className="output">Responsibility or achievement 2</li>
-                <li className="output">Responsibility or achievement 3</li>
+                <li className="output">
+                  Built and maintained web and mobile apps with a focus on
+                  performance and UX.
+                </li>
+                <li className="output">
+                  Improved app speed by up to 30% through code optimization and
+                  debugging.
+                </li>
+                <li className="output">
+                  Collaborated with a remote team across the full development
+                  lifecycle.
+                </li>
+                <li className="output">
+                  Integrated third-party APIs and services to extend application
+                  functionality.
+                </li>
               </ul>
+              <p>------------------------------------------------</p>
+            </div>
+            <div className="experience-item">
+              <p className="category-title">Freelance Developer</p>
+              <p>Freelance | 2019 - 2020</p>
+              <ul className="output-list">
+                <li className="output">
+                  Delivered custom academic web and mobile projects for student
+                  clients.
+                </li>
+                <li className="output">
+                  Managed end-to-end development, from design to deployment.
+                </li>
+                <li className="output">
+                  Ensured clean, maintainable code and responsive interfaces.
+                </li>
+                <li className="output">
+                  Communicated directly with clients to gather requirements and
+                  provide support.
+                </li>
+              </ul>
+              <p>------------------------------------------------</p>
+            </div>
+            <div className="experience-item">
+              <p className="category-title">Full Stack Web Developer</p>
+              <p>Bluefrog Contents and Support Inc. | 2017 - 2018</p>
+              <ul className="output-list">
+                <li className="output">
+                  Developed full-stack applications and integrated back-end
+                  APIs.
+                </li>
+                <li className="output">
+                  Wrote clean, scalable code for both front-end and back-end.
+                </li>
+                <li className="output">
+                  Used modern frameworks to enhance software functionality and
+                  UX.
+                </li>
+                <li className="output">
+                  Maintained and updated legacy systems for improved stability
+                  and performance.
+                </li>
+              </ul>
+              <p>------------------------------------------------</p>
             </div>
           </div>
         ),
@@ -389,25 +528,21 @@ export function ConsoleProvider({ children }: { children: ReactNode }) {
           <div className="projects-content">
             <h2>Projects</h2>
             <div className="project-item">
-              <h3>Project Name</h3>
-              <p>Description of the project and your role.</p>
-              <p>Technologies used: React, Node.js, etc.</p>
+              <p className="under-construction">
+                <span role="img" aria-label="construction">
+                  🚧
+                </span>{" "}
+                Under Construction{" "}
+                <span role="img" aria-label="construction">
+                  🚧
+                </span>
+              </p>
               <p>
-                <a
-                  href="https://github.com/yourusername/project"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  GitHub
-                </a>
-                {" | "}
-                <a
-                  href="https://project-demo.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Live Demo
-                </a>
+                Project showcase is currently being updated with my latest work.
+              </p>
+              <p>
+                Please check back soon or contact me for more information about
+                my projects.
               </p>
             </div>
           </div>
@@ -425,18 +560,17 @@ export function ConsoleProvider({ children }: { children: ReactNode }) {
           <div className="contact-content">
             <h2>Contact</h2>
             <div className="contact-item">
-              <p>Email: your.email@example.com</p>
+              <p>Phone: +63 999 833 5043</p>
+              <p>
+                Email:{" "}
+                <a href="mailto:amelitoalcuitasjr@gmail.com">
+                  amelitoalcuitasjr@gmail.com
+                </a>
+              </p>
+              <p>Location: Pagadian City, Philippines</p>
               <p>
                 <a
-                  href="https://github.com/yourusername"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  GitHub
-                </a>
-                {" | "}
-                <a
-                  href="https://linkedin.com/in/yourusername"
+                  href="https://linkedin.com/in/amelitoalcuitas"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -444,11 +578,11 @@ export function ConsoleProvider({ children }: { children: ReactNode }) {
                 </a>
                 {" | "}
                 <a
-                  href="https://twitter.com/yourusername"
+                  href="/Amelito%20Alcuitas%20(Resume).pdf"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Twitter
+                  Resume
                 </a>
               </p>
             </div>
