@@ -38,8 +38,8 @@ export default function Taskbar() {
     // Update time immediately
     updateTime();
 
-    // Set up interval to update time every minute
-    const intervalId = setInterval(updateTime, 60000);
+    // Set up interval to update time every second
+    const intervalId = setInterval(updateTime, 1000);
 
     // Clean up interval on unmount
     return () => clearInterval(intervalId);
