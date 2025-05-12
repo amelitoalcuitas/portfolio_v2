@@ -15,8 +15,13 @@ const SECTION_ICONS: Record<string, string> = {
 };
 
 export default function Taskbar() {
-  const { handleCommand, activeSection, isMinimized, setIsMinimized } =
-    useConsole();
+  const {
+    handleCommand,
+    activeSection,
+    isMinimized,
+    setIsMinimized,
+    isClosed,
+  } = useConsole();
   const [currentTime, setCurrentTime] = useState<string>("");
   const [showMenu, setShowMenu] = useState(false);
 
@@ -95,15 +100,25 @@ export default function Taskbar() {
         )}
       </div>
       <div className="win95-taskbar-items">
-        <button
-          className={`win95-taskbar-item ${
-            isMinimized ? "" : "win95-taskbar-item-active"
-          }`}
-          onClick={() => setIsMinimized(!isMinimized)}
-        >
-          <span className="win95-taskbar-item-icon">📄</span>
-          <span className="win95-taskbar-item-text">Console</span>
-        </button>
+        {!isClosed && (
+          <button
+            className={`win95-taskbar-item ${
+              isMinimized ? "" : "win95-taskbar-item-active"
+            }`}
+            onClick={() => {
+              // If minimized, restore it
+              if (isMinimized) {
+                setIsMinimized(false);
+              } else {
+                // If not minimized, minimize it
+                setIsMinimized(true);
+              }
+            }}
+          >
+            <span className="win95-taskbar-item-icon">📄</span>
+            <span className="win95-taskbar-item-text">Console</span>
+          </button>
+        )}
       </div>
       <div className="win95-taskbar-tray">
         <div className="win95-tray-icons">

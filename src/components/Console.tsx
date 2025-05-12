@@ -7,7 +7,8 @@ import TitleBar from "./TitleBar";
 import { useConsole } from "@/context/ConsoleContext";
 
 export default function Console() {
-  const { output, isMinimized, setIsMinimized } = useConsole();
+  const { output, isMinimized, setIsMinimized, isClosed, setIsClosed } =
+    useConsole();
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [size, setSize] = useState({ width: 800, height: 600 });
   const [isDragging, setIsDragging] = useState(false);
@@ -34,6 +35,12 @@ export default function Console() {
   const handleMinimize = () => {
     // Toggle minimized state in context
     setIsMinimized(!isMinimized);
+  };
+
+  // Handle close functionality
+  const handleClose = () => {
+    // Set closed state to true
+    setIsClosed(true);
   };
 
   // Handle maximize functionality
@@ -343,8 +350,8 @@ export default function Console() {
     };
   }, [isDragging, dragOffset]);
 
-  // Don't render anything if minimized
-  if (isMinimized) {
+  // Don't render anything if minimized or closed
+  if (isMinimized || isClosed) {
     return null;
   }
 
@@ -365,6 +372,7 @@ export default function Console() {
         onDragStart={handleDragStart}
         onMinimize={handleMinimize}
         onMaximize={handleMaximize}
+        onClose={handleClose}
         isMaximized={isMaximized}
       />
       <div className="console-container">

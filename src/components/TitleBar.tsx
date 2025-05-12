@@ -7,6 +7,7 @@ interface TitleBarProps {
   onDragStart?: (e: MouseEvent<HTMLDivElement>) => void;
   onMinimize?: () => void;
   onMaximize?: () => void;
+  onClose?: () => void;
   isMaximized?: boolean;
 }
 
@@ -15,6 +16,7 @@ export default function TitleBar({
   onDragStart,
   onMinimize,
   onMaximize,
+  onClose,
   isMaximized = false,
 }: TitleBarProps) {
   return (
@@ -47,6 +49,7 @@ export default function TitleBar({
         <button
           className="win95-button win95-close"
           aria-label="Close"
+          onClick={onClose}
           onMouseDown={(e) => e.stopPropagation()} // Prevent dragging when clicking buttons
         >
           <span className="win95-button-icon">✕</span>
